@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Calling Agent Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-phone-alt me-2"></i>
+                AI Calling Agent
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-circle text-success me-1"></i>
+                    <span id="connection-status">Connected</span>
+                </span>
+                <span class="navbar-text">
+                    Active Calls: <span id="active-calls-count" class="badge bg-warning">0</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Dashboard Overview -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4" id="stats-cards">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-campaigns">0</h4>
+                                <p class="mb-0">Total Campaigns</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-bullhorn fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-calls">0</h4>
+                                <p class="mb-0">Total Calls</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-phone fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="conversion-rate">0%</h4>
+                                <p class="mb-0">Conversion Rate</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-chart-line fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="avg-duration">0s</h4>
+                                <p class="mb-0">Avg Call Duration</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Tabs -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="campaigns-tab" data-bs-toggle="tab" data-bs-target="#campaigns" type="button">
+                    <i class="fas fa-bullhorn me-1"></i>Campaigns
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="calls-tab" data-bs-toggle="tab" data-bs-target="#calls" type="button">
+                    <i class="fas fa-phone me-1"></i>Calls
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics" type="button">
+                    <i class="fas fa-chart-bar me-1"></i>Analytics
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="live-tab" data-bs-toggle="tab" data-bs-target="#live" type="button">
+                    <i class="fas fa-broadcast-tower me-1"></i>Live Monitor
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="mainTabContent">
+            <!-- Campaigns Tab -->
+            <div class="tab-pane fade show active" id="campaigns" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Campaigns</h5>
+                        <button class="btn btn-primary btn-sm" onclick="showCreateCampaignModal()">
+                            <i class="fas fa-plus me-1"></i>New Campaign
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="campaigns-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Leads</th>
+                                        <th>Calls</th>
+                                        <th>Conversion</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Campaign rows will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calls Tab -->
+            <div class="tab-pane fade" id="calls" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Recent Calls</h5>
+                        <div>
+                            <select class="form-select form-select-sm d-inline-block w-auto me-2" id="calls-filter">
+                                <option value="">All Calls</option>
+                                <option value="completed">Completed</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                            <button class="btn btn-success btn-sm" onclick="showInitiateCallModal()">
+                                <i class="fas fa-phone me-1"></i>Initiate Call
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="calls-table">
+                                <thead>
+                                    <tr>
+                                        <th>Lead</th>
+                                        <th>Phone</th>
+                                        <th>Campaign</th>
+                                        <th>Status</th>
+                                        <th>Outcome</th>
+                                        <th>Duration</th>
+                                        <th>Started</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Call rows will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-pane fade" id="analytics" role="tabpanel">
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Call Outcomes</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="outcome-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Sentiment Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="sentiment-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Performance Over Time</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="performance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Monitor Tab -->
+            <div class="tab-pane fade" id="live" role="tabpanel">
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Active Calls</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="active-calls-list">
+                                    <p class="text-muted">No active calls</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Real-time Stats</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong>Active Conversations:</strong>
+                                    <span id="live-active-count" class="badge bg-primary">0</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Calls Today:</strong>
+                                    <span id="live-calls-today">0</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Success Rate:</strong>
+                                    <span id="live-success-rate">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Activity Feed</h5>
+                            </div>
+                            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                <div id="activity-feed">
+                                    <!-- Activity items will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Campaign Modal -->
+    <div class="modal fade" id="createCampaignModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Campaign</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-campaign-form">
+                        <div class="mb-3">
+                            <label for="campaign-name" class="form-label">Campaign Name</label>
+                            <input type="text" class="form-control" id="campaign-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="campaign-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="campaign-description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="campaign-script" class="form-label">Opening Script</label>
+                            <textarea class="form-control" id="campaign-script" rows="4" placeholder="Hello, this is an automated sales call. Am I speaking with {firstName}?"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="campaign-voice" class="form-label">Voice</label>
+                                <select class="form-select" id="campaign-voice">
+                                    <option value="alice">Alice</option>
+                                    <option value="man">Man</option>
+                                    <option value="woman">Woman</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="campaign-language" class="form-label">Language</label>
+                                <select class="form-select" id="campaign-language">
+                                    <option value="en-US">English (US)</option>
+                                    <option value="en-GB">English (UK)</option>
+                                    <option value="es-ES">Spanish</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createCampaign()">Create Campaign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initiate Call Modal -->
+    <div class="modal fade" id="initiateCallModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Initiate Call</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="initiate-call-form">
+                        <div class="mb-3">
+                            <label for="call-campaign" class="form-label">Campaign</label>
+                            <select class="form-select" id="call-campaign" required>
+                                <option value="">Select a campaign...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="call-phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="call-phone" placeholder="+1234567890" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="call-name" class="form-label">Contact Name</label>
+                            <input type="text" class="form-control" id="call-name" placeholder="First Last" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="initiateCall()">Start Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Toasts will be added here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
